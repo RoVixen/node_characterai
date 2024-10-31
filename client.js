@@ -127,7 +127,7 @@ class Client {
     }
 
     // chat
-    async createOrContinueChat(characterId, externalId = null) {
+    async createOrContinueChat(characterId, externalId = null, create = false) {
         if (!this.isAuthenticated()) throw Error("You must be authenticated to do this.");
         if (characterId == undefined || typeof(characterId) != "string" || typeof(externalId != null ? externalId : "") != "string") throw Error("Invalid arguments.");
 
@@ -146,7 +146,7 @@ class Client {
             if (response.startsWith("no character found for"))
                 throw Error("Character with this id was not found");
 
-            if (response === "No Such History" || response === "there is no history between user and character") { // Create a new chat
+            if (create || response === "No Such History" || response === "there is no history between user and character") { // Create a new chat
                 request = await this.requester.request("https://beta.character.ai/chat/history/create/", {
                     body: Parser.stringify({
                         character_external_id: characterId,
